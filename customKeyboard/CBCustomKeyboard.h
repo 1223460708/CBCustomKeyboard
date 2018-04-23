@@ -21,7 +21,7 @@ typedef enum : NSUInteger {
 
 @class CBCustomLetterKeyboard;
 @class CBCustomSymbolKeyboard;
-typedef void(^KeyBoardBlock)(KEYBOARDCLICKSTATUS status);
+typedef void(^KeyBoardBlock)(KEYBOARDCLICKSTATUS status,NSString *text);
 @interface CBCustomKeyboard : UIView<UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
 
 @property (nonatomic,strong)UICollectionView *numberCollection; //数字CollectionView

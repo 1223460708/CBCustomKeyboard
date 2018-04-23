@@ -104,7 +104,7 @@
     self.LetterKeyboard = [[CBCustomLetterKeyboard alloc] initWithFrame:CGRectMake(0, 0, cb_frame.size.width, cb_frame.size.height)];
     [self.LetterKeyboard setHidden:YES];
     __weak typeof(self) weakSelf = self;
-    self.LetterKeyboard.myBlock = ^(KEYBOARDCLICKSTATUS status) {
+    self.LetterKeyboard.myBlock = ^(KEYBOARDCLICKSTATUS status,NSString *text) {
         switch (status) {
             case SWITHNUMORLETTER: //隐藏字母键盘
             {
@@ -113,7 +113,7 @@
                 break;
             case KEYBOARDDOWN:
                 if (self.myBlock!=nil){
-                    weakSelf.myBlock(KEYBOARDDOWN);
+                    weakSelf.myBlock(KEYBOARDDOWN,nil);
                 }
                 
                 break;
@@ -124,7 +124,7 @@
             case OUTPUTSTRING:
                 weakSelf.inputString = [NSString stringWithFormat:@"%@%@",weakSelf.inputString,weakSelf.LetterKeyboard.inputString];
                 if (self.myBlock!=nil){
-                    weakSelf.myBlock(OUTPUTSTRING);
+                    weakSelf.myBlock(OUTPUTSTRING,weakSelf.inputString);
                 }
                 break;
             case DELETE:
@@ -133,7 +133,7 @@
                 }
                 weakSelf.inputString = [weakSelf.inputString substringToIndex:[weakSelf.inputString length] - 1];
                 if (self.myBlock!=nil){
-                    weakSelf.myBlock(OUTPUTSTRING);
+                    weakSelf.myBlock(OUTPUTSTRING,weakSelf.inputString);
                 }
                 
                 break;
@@ -145,7 +145,7 @@
     
     self.SymbolKeyboard = [[CBCustomSymbolKeyboard alloc]initWithFrame:CGRectMake(0, 0, cb_frame.size.width, cb_frame.size.height)];
     [self.SymbolKeyboard setHidden:YES];
-    self.SymbolKeyboard.myBlock = ^(KEYBOARDCLICKSTATUS status) {
+    self.SymbolKeyboard.myBlock = ^(KEYBOARDCLICKSTATUS status,NSString *text) {
         switch (status) {
             case SWITHNUMORLETTER: //隐藏符号键盘
             {
@@ -154,7 +154,7 @@
                 break;
             case KEYBOARDDOWN: //键盘收起
                 if (self.myBlock!=nil){
-                    weakSelf.myBlock(KEYBOARDDOWN);
+                    weakSelf.myBlock(KEYBOARDDOWN,nil);
                 }
                 break;
             case LETTER: //字母
@@ -164,7 +164,7 @@
             case OUTPUTSTRING: //输出
                 weakSelf.inputString = [NSString stringWithFormat:@"%@%@",weakSelf.inputString,weakSelf.SymbolKeyboard.inputString];
                 if (self.myBlock!=nil){
-                    weakSelf.myBlock(OUTPUTSTRING);
+                    weakSelf.myBlock(OUTPUTSTRING,weakSelf.inputString);
                 }
                 
                 break;
@@ -174,7 +174,7 @@
                 }
                 weakSelf.inputString = [weakSelf.inputString substringToIndex:[weakSelf.inputString length] - 1];
                 if (self.myBlock!=nil){
-                    weakSelf.myBlock(OUTPUTSTRING);
+                    weakSelf.myBlock(OUTPUTSTRING,weakSelf.inputString);
                 }
                 
                 break;
@@ -218,7 +218,7 @@
         {
             if (self.isPoint){
                 self.inputString = [NSString stringWithFormat:@"%@%@",self.inputString,@"."];
-                self.myBlock(OUTPUTSTRING);
+                self.myBlock(OUTPUTSTRING,self.inputString);
             }else {
                 [self.SymbolKeyboard setHidden:NO];
             }
@@ -227,12 +227,12 @@
             break;
         case 10:
             self.inputString = [NSString stringWithFormat:@"%@%@",self.inputString,@"0"];
-            self.myBlock(OUTPUTSTRING);
+            self.myBlock(OUTPUTSTRING,self.inputString);
             break;
         default:
         {
             self.inputString = [NSString stringWithFormat:@"%@%d",self.inputString,[numberArray[indexPath.row] intValue]];
-            self.myBlock(OUTPUTSTRING);
+            self.myBlock(OUTPUTSTRING,self.inputString);
         }
             break;
     }
@@ -254,12 +254,12 @@
         return;
     }
     self.inputString = [self.inputString substringToIndex:[self.inputString length] - 1];
-    self.myBlock(OUTPUTSTRING);
+    self.myBlock(OUTPUTSTRING,self.inputString);
 }
 #pragma mark --键盘 收起
 - (void)keyboardDownnClick{
     if (self.myBlock != nil){
-        self.myBlock(KEYBOARDDOWN);
+        self.myBlock(KEYBOARDDOWN,nil);
     }
     
 }
@@ -501,7 +501,7 @@
     }else{
         self.inputString = zmArray[indexPath.row];
     }
-    self.myBlock(OUTPUTSTRING);
+    self.myBlock(OUTPUTSTRING,self.inputString);
 }
 
 #pragma mark ---UICollectionViewDelegateFlowLayout
@@ -511,7 +511,7 @@
 
 #pragma mark ----btnClick
 - (void)swithNumberBtnClick{
-    self.myBlock(SWITHNUMORLETTER);
+    self.myBlock(SWITHNUMORLETTER,nil);
 }
 - (void)bigSmallBtnClick:(UIButton *)sender{
     sender.selected = !sender.selected;
@@ -534,19 +534,19 @@
 #pragma mark --切换符号键盘
 - (void)characterBtnClick:(UIButton *)sender{
     if (self.myBlock != nil){
-        self.myBlock(SYMBOL);
+        self.myBlock(SYMBOL,nil);
     }
     
 }
 - (void)keyboardDownClick{
     if (self.myBlock != nil){
-        self.myBlock(KEYBOARDDOWN);
+        self.myBlock(KEYBOARDDOWN,nil);
     }
     
 }
 - (void)deleteBtnClick{
     if (self.myBlock != nil){
-        self.myBlock(DELETE);
+        self.myBlock(DELETE,nil);
     }
     
 }
@@ -768,7 +768,7 @@
     }else {
         self.inputString = symbolFourArray[indexPath.row];
     }
-    self.myBlock(OUTPUTSTRING);
+    self.myBlock(OUTPUTSTRING,self.inputString);
 }
 
 #pragma mark ---UICollectionViewDelegateFlowLayout
@@ -779,26 +779,26 @@
 #pragma mark ----btnClick  切换数字键盘
 - (void)swithNumberBtnClick{
     if (self.myBlock != nil){
-        self.myBlock(SWITHNUMORLETTER);
+        self.myBlock(SWITHNUMORLETTER,nil);
     }
     
 }
 #pragma mark ----btnClick  切换字母键盘
 - (void)letterBtnClick:(UIButton *)sender{
     if (self.myBlock != nil){
-        self.myBlock(LETTER);
+        self.myBlock(LETTER,nil);
     }
     
 }
 - (void)keyboardDownClick{
     if (self.myBlock != nil){
-        self.myBlock(KEYBOARDDOWN);
+        self.myBlock(KEYBOARDDOWN,nil);
     }
     
 }
 - (void)deleteBtnClick{
     if (self.myBlock != nil){
-        self.myBlock(DELETE);
+        self.myBlock(DELETE,nil);
     }
     
 }
